@@ -277,6 +277,122 @@ router.put("/updaterecipe/:id",authMiddleware,async (req,res)=>{
   })
 
 
+router.put("/profileupdate",authMiddleware,async (res,req)=>{
+  try{
+    const userId = req.user.userId;
+    const user = await User.findByID(userId);
+    const newUsername = req.body.username
+    
+    if (!user){
+      return res.status(404).json({
+        "message":"User not found"
+      })
+    }
+    const newExistingUser = await User.findOne({newUsername})
+
+    if (newExistingUser){
+      return res.status(403).json({
+        "message":"Username already exists"
+      })
+    }
+    user.username = newUsername
+    await user.save()
+
+    return res.status(200).json({
+      "message":"Username updated successfully"
+    })
+
+  }catch (error){
+    console.log(error)
+    return res.status(500).json({
+      "message":"username cannot be updated",
+      "error":error.message
+    });
+  }
+})
+
+
+router.put("/changepassword",authMiddleware,async (req,res)=>{
+  try{
+    const userId = req.user.userId;
+    const user = await User.findById(userId);
+    const newPassword = req.body.newPassword;
+    const currentPassword = req.body.currentPassword
+    const confirmPassword = req.body.confirmPassword
+
+    if (!(newPassword && currentPassword && confirmPassword)){
+      return res.status(400).json({
+        "message":"All fields are required"
+      })
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    
+    if(!isMatch){
+      return res.status(400).json({
+        "message":"Old password is incorrect"
+      })
+    }
+
+    if (newPassword !== confirmPassword){
+      return res.status(400).json({
+        "message":"Passwords do not match"
+      })
+    }
+
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+
+    if (!passwordRegex.test(newPassword)){
+      return res.status(400).json({
+        "message":"Password must contain 8 characters, uppercase, lowercase, number and special character"
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword,10);
+    user.password = hashedPassword;
+
+    await user.save();
+
+    return res.status(200).json({
+      "message":"Password changed"
+    });
+    
+  }catch(error){
+    console.log(error);
+    return res.status(500).json({
+      "message":"Internal Server Error",
+      "error": error.message
+    });
+  }
+})
+
+
+router.get("/search",authMiddleware,async (req,res)=>{
+  try{
+    const query = req.query.q;
+    
+    if (!query){
+      return res.status(400).json({
+        "message":"Search query is required"
+    })
+    }
+
+    const recipes = await Recipe.find({
+      $or : [
+        {title: {$regex:query, $options:"i"}},
+        {ingredients: {$regex:query, $options:"i"}},
+        {difficulty: {$regex:query, $options:"i"}}
+      ]
+    })
+
+    return res.status(200).json(recipes);
+  }catch(error){
+    res.status(500).json({
+      "message":"Search failed",
+      "error":error.message
+    })
+  }
+})
 
 
 
