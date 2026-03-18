@@ -1,6 +1,9 @@
 var express = require('express');
 var router = express.Router();
 var Admin = require('../models/admin_model')
+var bcrypt = require('bcrypt')
+var adminAuth = require('../middleware/adminAuth')
+const User  = require('../models/user_model')
 
 router.get("/create",async (req,res)=>{
 try{
@@ -16,6 +19,48 @@ try{
     console.log(error);
     return res.send("failed to create admin");
 }
+})
+
+router.get("/login",(req,res)=>{
+    res.render("admin/login",{error:null});
+})
+
+router.post("/login",async (req,res)=>{
+    try{
+        const email = req.body.email;
+        const password = req.body.password;
+        const admin = await Admin.findOne({email});
+
+        if(!admin){
+            return res.render("admin/login",{error:"Invalid email"});
+        }
+
+        const isMatch = await password === admin.password
+
+        if(!isMatch){
+            return res.render("admin/login",{error:"Invalid password"});
+        }
+
+        req.session.adminId = admin._id;
+
+        res.redirect("/admin/dashboard")
+    
+    }catch(error){
+        console.log(error);
+        res.render("/admin/login",{error:"something went wrong"})
+    }
+});
+
+
+router.get("/dashboard", adminAuth, async (req,res)=>{
+    try{
+        const users = await User.find()
+        .sort({createdAt:-1})
+        res.render("admin/dashboard",{users});
+    }catch(error){
+        console.log(error);
+        res.render("admin/dashboard",{error:"Something went wrong"})
+    }
 })
 
 module.exports = router;
