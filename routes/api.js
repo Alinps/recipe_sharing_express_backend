@@ -44,6 +44,13 @@ router.post('/signup', async (req, res) => {
         message: "Email already taken"
       });
     }
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+
+    if (!passwordRegex.test(newPassword)){
+      return res.status(400).json({
+        "message":"Password must contain 8 characters, uppercase, lowercase, number and special character"
+      });
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
