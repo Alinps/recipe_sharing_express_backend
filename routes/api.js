@@ -142,6 +142,24 @@ router.post("/create",authMiddleware, upload.single("image"), async (req,res)=>{
 });
 
 
+router.get("/list",authMiddleware,async (req,res)=>{
+  try {
+    const recipes = await Recipe.find()
+          .populate("createdBy","username email");
+          res.status(200).json({
+            success:true,
+            count: recipes.length,
+            data: recipes
+          });
+  } catch (error){
+    res.status(500).json({
+      success:false,
+      message:"Failded to fetch recipes",
+      error: error.message
+    });
+  }
+})
+
 
 
 module.exports = router;
