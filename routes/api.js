@@ -158,7 +158,68 @@ router.get("/list",authMiddleware,async (req,res)=>{
       error: error.message
     });
   }
+});
+
+router.get("/profile/:id",authMiddleware,async (req,res)=>{
+  try {
+    const userId = req.params.id;
+    const user = await User.findById(userId).select("username email");
+
+    if(!user){
+      return res.status(404).json({
+        "message":"User not found"
+      });
+    }
+
+    const recipes = await Recipe.find({createdBy:userId}).select("title image createdAt");
+
+    return res.status(200).json({
+      user,
+      recipes
+    });
+  }catch (error){
+    return res.status(500).json({
+      message:"Error fetching  profile",
+      error: error.message
+    });
+  }
+
 })
+
+
+router.delete("/deletePost/:id",authMiddleware,async (req,res)=>{
+  try {
+    recipeId = req.params.id
+    const recipe = await Recipe.findById(recipeId)
+
+    if(!recipe){
+      return res.status(404).json({
+        "message":"Recipe not found"
+      });
+    }
+
+    if (recipe.createdBy.toString() !== req.user.userId){
+      return res.status(403).json({
+        "message":"You are not allowed to delete this recipe"
+      });
+    }
+    //deleting recipe
+    await Recipe.findByIdAndDelete(recipeId);
+
+    return res.status(200).json({
+      "message":"Recipe deleted successfully"
+    });
+
+  }catch (error){
+    return res.status(500).json({
+      "message":"Error deleting recipe",
+      "error":error.message
+    });
+  }
+});
+
+
+
 
 
 
