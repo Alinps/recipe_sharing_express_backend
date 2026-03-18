@@ -6,6 +6,7 @@ const User = require('../models/user_model');
 const Recipe = require('../models/recipe_model');
 const authMiddleware = require("../middleware/auth");
 const upload = require("../middleware/upload");
+const fs = require('fs');
 
 
 // route for signup
@@ -218,6 +219,62 @@ router.delete("/deletePost/:id",authMiddleware,async (req,res)=>{
   }
 });
 
+
+
+
+router.put("/updaterecipe/:id",authMiddleware,async (req,res)=>{
+  try{
+    const recipeId = req.params.id
+    const recipe = await Recipe.findById(recipeId)
+
+    if (!recipe){
+      return res.status(404).json({
+        "message":"Recipe not found"
+      });
+    }
+
+    if (recipe.createdBy.toString() !== req.user.userId){
+      return res.status(403).json({
+        "message":"You are not allowed to edit this recipe"
+      });
+    }
+    
+    upload.single('image')(req,res,async(err)=>{
+      if (err) {
+        return res.status(500).json({"message":"file upload error"})
+      }
+      try{
+        recipe.title = req.body.title || recipe.title;
+        recipe.description = req.body.description || recipe.description;
+        recipe.ingredients = req.body.ingredients || recipe.ingredients;
+        recipe.steps = req.body.steps || recipe.steps;
+        recipe.cookingTime = req.body.cookingTime || recipe.cookingTime;
+        recipe.difficulty = req.body.difficulty || recipe.difficulty;
+        recipe.image = req.file ? req.file.filename : null || recipe.image
+
+        await recipe.save();
+
+        return res.status(200).json({
+          "message":"Recipe updated successfully"
+        })
+      }catch(error){
+        if (req.file){
+          fs.unlink(req.file.path,()=>{});
+        }
+        console.log(error);
+        return  res.status(500).json({
+              "message":"Error updating recipe",
+               error:error.message
+              });
+      }
+    })
+    }catch(error){
+      console.log(error)
+      return res.status(500).json({
+        "message":"Internal Server Error"
+      });
+    }
+  })
 
 
 
