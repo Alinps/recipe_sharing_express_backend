@@ -7,6 +7,7 @@ const Recipe = require('../models/recipe_model');
 const authMiddleware = require("../middleware/auth");
 const upload = require("../middleware/upload");
 const fs = require('fs');
+const { askCookingAssistant } = require('../services/aiService');
 
 
 // route for signup
@@ -401,6 +402,29 @@ router.get("/search",authMiddleware,async (req,res)=>{
   }
 })
 
+
+router.post("/chat",authMiddleware, async (req,res)=>{
+  try{
+    const {message} = req.body;
+
+    if (!message){
+      return res.status(400).json({
+        message:"Message is required"
+      });
+    }
+
+    const aiReply = await askCookingAssistant(message);
+    
+    return res.json({
+      reply:aiReply
+    });
+  }catch(error){
+    console.error(error);
+    return res.status(500).json({
+      message:"AI service error"
+    });
+  }
+});
 
 
 module.exports = router;
