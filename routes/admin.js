@@ -1,9 +1,10 @@
 var express = require('express');
 var router = express.Router();
-var Admin = require('../models/admin_model')
-var bcrypt = require('bcrypt')
-var adminAuth = require('../middleware/adminAuth')
-const User  = require('../models/user_model')
+var Admin = require('../models/admin_model');
+var bcrypt = require('bcrypt');
+var adminAuth = require('../middleware/adminAuth');
+const User  = require('../models/user_model');
+const Recipe = require('../models/recipe_model');
 
 router.get("/create",async (req,res)=>{
 try{
@@ -42,9 +43,8 @@ router.post("/login",async (req,res)=>{
         }
 
         req.session.adminId = admin._id;
-
         res.redirect("/admin/dashboard")
-    
+        
     }catch(error){
         console.log(error);
         res.render("/admin/login",{error:"something went wrong"})
@@ -60,6 +60,17 @@ router.get("/dashboard", adminAuth, async (req,res)=>{
     }catch(error){
         console.log(error);
         res.render("admin/dashboard",{error:"Something went wrong"})
+    }
+})
+
+router.get("/userrecipes/:id",adminAuth, async (req,res)=>{
+    try{
+        const userId = req.params.id
+        const recipes = await  Recipe.find({createdBy:userId}).select("title image createdAt").sort({createdAt:-1});
+        res.render("admin/recipe-list",{recipes})
+    }catch(error){
+        console.log(error)
+        res.render("admin/recipe-list",{error:"Something went wrong"})
     }
 })
 

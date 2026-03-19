@@ -6,6 +6,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const db =  require('./config/db.js');
+const expressLayouts = require('express-ejs-layouts');
 
 
 var indexRouter = require('./routes/index');
@@ -18,6 +19,10 @@ var app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+
+//layout setup
+app.use(expressLayouts);
+app.set('layout', 'layout/main-layout');
 
 app.use(logger('dev'));
 app.use("/uploads",express.static("uploads"));

@@ -1,0 +1,65 @@
+/* ===== GLOBAL RESET ===== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    background:#0f172a;
+    color:#e2e8f0;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+}
+
+/* ===== MAIN CONTENT ===== */
+
+.main-content{
+    flex:1;
+    width:90%;
+    margin:auto;
+    padding:30px 0;
+}
+
+/* ===== NAVBAR ===== */
+
+.navbar{
+    background:#020617;
+    border-bottom:1px solid #1e293b;
+    padding:15px 40px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.logo{
+    font-size:20px;
+    font-weight:bold;
+    color:#f8fafc;
+}
+
+.nav-links a{
+    color:#cbd5f5;
+    text-decoration:none;
+    margin-left:25px;
+    font-size:14px;
+    transition:0.2s;
+}
+
+.nav-links a:hover{
+    color:#3b82f6;
+}
+
+/* ===== FOOTER ===== */
+
+.footer{
+    background:#020617;
+    border-top:1px solid #1e293b;
+    padding:15px;
+    text-align:center;
+    font-size:13px;
+    color:#94a3b8;
+}
