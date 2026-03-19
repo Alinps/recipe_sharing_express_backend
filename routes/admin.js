@@ -76,4 +76,23 @@ router.get("/recipelist/:id",adminAuth, async (req,res)=>{
     }
 })
 
+router.post("/toggleuser/:id", adminAuth, async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const user = await User.findById(userId);
+
+        if(!user){
+            return res.redirect("/admin/dashboard");
+        }
+
+        user.isActive = !user.isActive;
+        await user.save();
+        res.redirect("/admin/dashboard");
+
+    } catch (error) {
+        console.log(error);
+        res.redirect("/admin/dashboard");
+    }
+});
+
 module.exports = router;

@@ -1,58 +1,40 @@
 <link rel="stylesheet" href="/css/dashboard.css">
 
 <div class="dashboard-container">
+    <h1>User Dashboard</h1>
+    <table class="user-table">
+        <thead>
+            <tr>
+                <th>Si no.</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Account status</th>
+                <th>Joined Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
 
-<h1>User Dashboard</h1>
-
-<table class="user-table">
-
-<thead>
-
-<tr>
-<th>Si no.</th>
-<th>Name</th>
-<th>Email</th>
-<th>Account status</th>
-<th>Joined Date</th>
-<th>Action</th>
-</tr>
-
-</thead>
-
-<tbody>
-
-<% users.forEach((user,index)=>{ %>
-
-<tr>
-
-<td><%= index + 1 %></td>
-<td><%= user.username %></td>
-<td><%= user.email %></td>
-<td><%= user.isActive ? "Active" : "Blocked" %></td>
-<td><%= new Date(user.createdAt).toLocaleDateString() %></td>
-
-<td class="action-buttons">
-
-<a href="/admin/recipelist/<%= user._id %>" class="btn view-btn">
-View
-</a>
-
-<button class="btn block-btn">
-Block
-</button>
-
-<button class="btn analytics-btn">
-Analytics
-</button>
-
-</td>
-
-</tr>
-
-<% }) %>
-
-</tbody>
-
-</table>
-
+        <tbody>
+            <% users.forEach((user,index)=>{ %>
+            <tr>
+                <td><%= index + 1 %></td>
+                <td><%= user.username %></td>
+                <td><%= user.email %></td>
+                <td><%= user.isActive ? "Active" : "Blocked" %></td>
+                <td><%= new Date(user.createdAt).toLocaleDateString() %></td>
+                <td class="action-buttons">
+                    <a href="/admin/recipelist/<%= user._id %>" class="btn view-btn">View</a>
+                    <form action="/admin/toggleuser/<%= user._id %>" method="POST" style="display:inline;">
+                        <% if(user.isActive){ %>
+                            <button class="btn block-btn">Block</button>
+                        <% } else { %>
+                            <button class="btn unblock-btn">Unblock</button>
+                        <% } %>
+                    </form>
+                    <button class="btn analytics-btn">Analytics</button>
+                </td>
+            </tr>
+            <% }) %>
+        </tbody>
+    </table>
 </div>
