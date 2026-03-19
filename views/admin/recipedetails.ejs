@@ -1,0 +1,76 @@
+<link rel="stylesheet" href="/css/recipedetails.css">
+
+<div class="recipe-container">
+
+<h1 class="page-title">Recipe Details</h1>
+
+<% if(error){ %>
+
+<div class="error-box">
+<%= error %>
+</div>
+
+<% } %>
+
+<% if(recipe){ %>
+
+<div class="recipe-card">
+
+<div class="recipe-image">
+<img src="/uploads/<%= recipe.image %>" alt="recipe image">
+</div>
+
+<div class="recipe-content">
+
+<h2 class="recipe-title">
+<%= recipe.title %>
+</h2>
+
+<p class="recipe-description">
+<%= recipe.description %>
+</p>
+
+<div class="recipe-info">
+
+<div>
+<span class="label">Difficulty:</span>
+<%= recipe.difficulty %>
+</div>
+
+<div>
+<span class="label">Cooking Time:</span>
+<%= recipe.cookingTime %>
+</div>
+
+<div>
+<span class="label">Created:</span>
+<%= new Date(recipe.createdAt).toLocaleDateString('en-GB',{
+day:'2-digit',
+month:'short',
+year:'numeric'
+}) %>
+</div>
+
+</div>
+
+<hr>
+
+<h3>Ingredients</h3>
+
+<div class="recipe-section">
+<%= recipe.ingredients %>
+</div>
+
+<h3>Steps</h3>
+
+<div class="recipe-section">
+<%= recipe.steps %>
+</div>
+
+</div>
+
+</div>
+
+<% } %>
+
+</div>

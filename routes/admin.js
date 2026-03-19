@@ -68,7 +68,8 @@ router.get("/dashboard", adminAuth, async (req,res)=>{
 router.get("/recipelist/:id",adminAuth, async (req,res)=>{
     try{
         const userId = req.params.id
-        const recipes = await  Recipe.find({createdBy:userId}).select("title createdAt").sort({createdAt:-1});
+        const recipes = await  Recipe.find({createdBy:userId}).select("title createdAt id").sort({createdAt:-1});
+        console.log(recipes)
         res.render("admin/recipe-list",{recipes,title:"User Recipes",error:null})
     }catch(error){
         console.log(error)
@@ -88,11 +89,22 @@ router.post("/toggleuser/:id", adminAuth, async (req, res) => {
         user.isActive = !user.isActive;
         await user.save();
         res.redirect("/admin/dashboard");
-
     } catch (error) {
         console.log(error);
         res.redirect("/admin/dashboard");
     }
 });
+
+router.get("/recipedetails/:id",adminAuth,async (req,res)=>{
+    try{
+        const recipeId = req.params.id
+        const recipe = await Recipe.findById(recipeId)
+        console.log(recipe.image)
+        return res.render("admin/recipedetails",{recipe,error:null,title:"Recipe Details"})
+    }catch(error){
+        console.log(error);
+        res.render("admin/recipedetails",{recipe:null,error:"something went wrong",                                                                                                                                                                                                                title:"Recipe Details"})
+    }
+})
 
 module.exports = router;
