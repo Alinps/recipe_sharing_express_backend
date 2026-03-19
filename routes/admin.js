@@ -23,7 +23,9 @@ try{
 })
 
 router.get("/login",(req,res)=>{
-    res.render("admin/login",{error:null});
+    res.render("admin/login",{
+        error:null,title: "Admin Login",
+        layout: "layout/auth-layout"});
 })
 
 router.post("/login",async (req,res)=>{
@@ -44,7 +46,7 @@ router.post("/login",async (req,res)=>{
 
         req.session.adminId = admin._id;
         res.redirect("/admin/dashboard")
-        
+
     }catch(error){
         console.log(error);
         res.render("/admin/login",{error:"something went wrong"})
