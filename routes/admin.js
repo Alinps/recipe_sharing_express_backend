@@ -65,11 +65,11 @@ router.get("/dashboard", adminAuth, async (req,res)=>{
     }
 })
 
-router.get("/userrecipes/:id",adminAuth, async (req,res)=>{
+router.get("/recipelist/:id",adminAuth, async (req,res)=>{
     try{
         const userId = req.params.id
-        const recipes = await  Recipe.find({createdBy:userId}).select("title image createdAt").sort({createdAt:-1});
-        res.render("admin/recipe-list",{recipes})
+        const recipes = await  Recipe.find({createdBy:userId}).select("title createdAt").sort({createdAt:-1});
+        res.render("admin/recipe-list",{recipes,title:"User Recipes",error:null})
     }catch(error){
         console.log(error)
         res.render("admin/recipe-list",{error:"Something went wrong"})

@@ -1,0 +1,69 @@
+<link rel="stylesheet" href="/css/recipe-table.css">
+
+<h1 class="page-title">User Recipes</h1>
+
+<% if(error){ %>
+
+<div class="error-box">
+    <%= error %>
+</div>
+
+<% } else { %>
+
+<table class="recipe-table">
+
+<thead>
+<tr>
+<th>Sl no</th>
+<th>Title</th>
+<th>Created</th>
+<th>Actions</th>
+</tr>
+</thead>
+
+<tbody>
+
+<% if(recipes.length === 0){ %>
+
+<tr>
+<td colspan="4" class="no-data">No recipes found</td>
+</tr>
+
+<% } %>
+
+<% recipes.forEach((recipe,index)=>{ %>
+
+<tr>
+
+<td><%= index + 1 %></td>
+
+
+<td>
+<%= recipe.title %>
+</td>
+
+<td>
+<%= new Date(recipe.createdAt).toLocaleDateString('en-GB', {
+  day: '2-digit',
+  month: 'short',
+  year: 'numeric'
+}) %>
+</td>
+
+<td class="action-buttons">
+
+<a href="/admin/recipelist/" class="btn view-btn">
+View
+</a>
+
+</tr>
+
+
+<% }) %>
+
+</tbody>
+
+</table>
+
+
+<% } %>
